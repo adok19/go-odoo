@@ -6,6 +6,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/joho/godotenv"
 	odoo "github.com/skilld-labs/go-odoo"
 
 	"github.com/spf13/cobra"
@@ -50,6 +51,28 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initOdoo, initTemplate, initGenerator)
+	godotenv.Load()
+	envs := make(map[string]string)
+	for _, element := range os.Environ() {
+		variable := strings.Split(element, "=")
+		fmt.Printf("%s => %s\n", variable[0], variable[1])
+		envs[variable[0]] = variable[1]
+	}
+	if envs["odooDB"] != "" &&
+		envs["odooLogin"] != "" &&
+		envs["odooPassword"] != "" &&
+		envs["odooURL"] != "" &&
+		envs["destFolder"] != "" &&
+		envs["models"] != "" {
+		database = envs["odooDB"]
+		admin = envs["odooLogin"]
+		password = envs["odooPassword"]
+		url = envs["odooURL"]
+		destFolder = envs["destFolder"]
+		models = envs["models"]
+		noFmt = false
+		return
+	}
 
 	rootCmd.PersistentFlags().StringVarP(&database, "database", "d", "odoo", "the instance database")
 	rootCmd.PersistentFlags().StringVarP(&admin, "admin", "u", "admin", "the admin username")
@@ -78,7 +101,7 @@ func initOdoo() {
 
 func initTemplate() {
 	var err error
-	if t, err = template.New("model.tmpl").ParseFiles("./generator/cmd/tmpl/model.tmpl"); err != nil {
+	if t, err = template.New("model.tmpl").ParseFiles("./cmd/tmpl/model.tmpl"); err != nil {
 		handleError(err)
 	}
 }
