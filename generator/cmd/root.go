@@ -61,15 +61,22 @@ func init() {
 	if envs["odooDB"] != "" &&
 		envs["odooLogin"] != "" &&
 		envs["odooPassword"] != "" &&
-		envs["odooURL"] != "" &&
-		envs["destFolder"] != "" &&
-		envs["models"] != "" {
+		envs["odooURL"] != "" {
 		database = envs["odooDB"]
 		admin = envs["odooLogin"]
 		password = envs["odooPassword"]
 		url = envs["odooURL"]
-		destFolder = envs["destFolder"]
-		models = envs["models"]
+		if envs["destFolder"] != "" {
+			destFolder = envs["destFolder"]
+		} else {
+			destFolder = "./../."
+		}
+		if envs["models"] != "" {
+			models = envs["models"]
+		} else {
+			models = ""
+		}
+
 		noFmt = false
 		return
 	}
