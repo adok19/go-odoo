@@ -125,8 +125,23 @@ func NewMany2One(id int64, name string) *Many2One {
 }
 
 // Get *Many2One value.
-func (m *Many2One) Get() int64 {
-	return m.ID
+func (m *Many2One) Get() (int64, string) {
+	if m != nil {
+		return m.ID, m.Name
+	}
+	return 0, ""
+}
+func (m *Many2One) Id() int64 {
+	if m != nil {
+		return m.ID
+	}
+	return 0
+}
+func (m *Many2One) Value() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
 }
 
 // Relation represents odoo one2many and many2many types.
